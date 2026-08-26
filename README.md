@@ -318,7 +318,7 @@ class ApiConstants {
 
 **Backend**
 - Python, Django, Django REST Framework
-- SQLite (dev) / PostgreSQL (prod-ready)
+- PostgreSQL (prod-ready)
 - Django templating for the web UI
 
 **Mobile**
