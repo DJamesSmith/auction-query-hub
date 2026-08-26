@@ -304,14 +304,13 @@ class ApiConstants {
 ---
 
 ## 📲 Screenshots — Flutter Mobile App
-
-| Home | Create User |
-|---|---|---|
-| ![Home](assets/mobile_screenshots/home.jpeg) | ![Create User](assets/mobile_screenshots/create_user.jpeg) |
-
-| Auctions List | Create Auction | Analytics |
-|---|---|---|
-| ![Auctions List](assets/mobile_screenshots/auctions_list.jpeg) | ![Create Auction](assets/mobile_screenshots/create_auction.jpeg) | ![Analytics](assets/mobile_screenshots/analytics.jpeg) |
+<table> <tr>
+<td align="center"> <img src="assets/mobile_screenshots/home.jpeg" width="255" height="552" alt="Home"><br> <sub>Home</sub> </td>
+<td align="center"> <img src="assets/mobile_screenshots/create_user.jpeg" width="255" height="552" alt="Create User"><br> <sub>Create User</sub> </td> </tr> <tr>
+<td align="center"> <img src="assets/mobile_screenshots/auctions_list.jpeg" width="255" height="552" alt="Auctions List"><br> <sub>Auctions List</sub> </td>
+<td align="center"> <img src="assets/mobile_screenshots/create_auction.jpeg" width="255" height="552" alt="Create Auction"><br> <sub>Create Auction</sub> </td>
+<td align="center"> <img src="assets/mobile_screenshots/analytics.jpeg" width="255" height="552" alt="Analytics"><br> <sub>Analytics</sub> </td>
+</tr> </table>
 
 ---
 
