@@ -2,7 +2,18 @@
 
 **Auction Query Hub** is a full-stack online auction management system. It pairs a **Django + Django REST Framework** backend (with a server-rendered web UI and a JSON API) with a cross-platform **Flutter** mobile client, so auctions, buyer/seller/admin accounts, and live analytics can be managed from both a browser and a phone.
 
-The repository is organized as two independent projects that talk to each other over HTTP:
+The repository is organized as two independent projects that talk to each other over HTTP, plus a shared `assets/` folder for documentation screenshots:
+
+```
+auction-query-hub/                     (repo root)
+├── assets/
+│   ├── django_htmlDOM_templates/      # Web UI screenshots
+│   └── mobile_screenshots/            # Flutter app screenshots
+├── auction_query_hub/                 # Django backend + web UI
+├── auction_query_hub_mobileapp/       # Flutter mobile app
+├── .gitignore
+└── README.md
+```
 
 | Project | Folder | Stack |
 |---|---|---|
@@ -129,7 +140,7 @@ auction_query_hub/
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/<your-username>/auction-query-hub.git
+git clone https://github.com/DJamesSmith/auction-query-hub.git
 cd auction-query-hub/auction_query_hub
 
 # 2. Create and activate a virtual environment
@@ -282,33 +293,25 @@ class ApiConstants {
 
 ## 🖼 Screenshots — Django Web Views
 
-> Screenshots of the server-rendered templates (home page, auction list/form, user pages, search results, analytics dashboard) go here.
-
-<!--
-| Home | Auction List | Auction Form |
-|---|---|---|
-| ![Home](docs/screenshots/django/home.png) | ![Auction List](docs/screenshots/django/auction_list.png) | ![Auction Form](docs/screenshots/django/auction_form.png) |
-
-| Search Results | Analytics |
+| Home | Auctions |
 |---|---|
-| ![Search Results](docs/screenshots/django/search_results.png) | ![Analytics](docs/screenshots/django/analytics.png) |
--->
+| ![Home](assets/django_htmlDOM_templates/home.png) | ![Auctions](assets/django_htmlDOM_templates/auctions.png) |
+
+| Users | Analytics Dashboard |
+|---|---|
+| ![Users](assets/django_htmlDOM_templates/users.png) | ![Analytics Dashboard](assets/django_htmlDOM_templates/analytics.png) |
 
 ---
 
 ## 📲 Screenshots — Flutter Mobile App
 
-> Screenshots of the mobile app screens (home, add user, auction form, auctions list, users list, analytics) go here.
-
-<!--
-| Home Screen | Add User | Auction Form |
+| Home | Create User |
 |---|---|---|
-| ![Home Screen](docs/screenshots/flutter/home_screen.png) | ![Add User](docs/screenshots/flutter/add_user.png) | ![Auction Form](docs/screenshots/flutter/auction_form.png) |
+| ![Home](assets/mobile_screenshots/home.jpeg) | ![Create User](assets/mobile_screenshots/create_user.jpeg) |
 
-| Auctions List | Users List | Analytics |
+| Auctions List | Create Auction | Analytics |
 |---|---|---|
-| ![Auctions List](docs/screenshots/flutter/auctions_list.png) | ![Users List](docs/screenshots/flutter/users_list.png) | ![Analytics](docs/screenshots/flutter/analytics.png) |
--->
+| ![Auctions List](assets/mobile_screenshots/auctions_list.jpeg) | ![Create Auction](assets/mobile_screenshots/create_auction.jpeg) | ![Analytics](assets/mobile_screenshots/analytics.jpeg) |
 
 ---
 
