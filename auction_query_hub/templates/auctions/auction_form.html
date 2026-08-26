@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %} Create Auction {% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h3 class="mb-0"> Create Auction </h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="message" class="alert d-none" role="alert"></div>
+                        <form id="auction-form" method="POST" data-url="{% url 'create_auction' %}" novalidate>
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="{{ form.title.id_for_label }}" class="form-label"> Title </label>
+                                {{ form.title }}
+                                <div id="title-error" class="text-danger small mt-1"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.description.id_for_label }}" class="form-label"> Description </label>
+                                {{ form.description }}
+                                <div id="description-error" class="text-danger small mt-1"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.base_price.id_for_label }}" class="form-label"> Base Price </label>
+                                {{ form.base_price }}
+                                <div id="base_price-error" class="text-danger small mt-1"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.current_price.id_for_label }}" class="form-label"> Current Price </label>
+                                {{ form.current_price }}
+                                <div id="current_price-error" class="text-danger small mt-1"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.start_time.id_for_label }}" class="form-label"> Start Time </label>
+                                {{ form.start_time }}
+                                <div id="start_time-error" class="text-danger small mt-1"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="{{ form.end_time.id_for_label }}" class="form-label"> End Time </label>
+                                {{ form.end_time }}
+                                <div id="end_time-error" class="text-danger small mt-1"></div>
+                            </div>
+
+                            <!-- Seller -->
+                            <div class="mb-3">
+                                <label for="{{ form.seller.id_for_label }}" class="form-label"> Seller </label>
+                                {{ form.seller }}
+                                <div id="seller-error" class="text-danger small mt-1"></div>
+                            </div>
+
+                            <button type="submit" id="auction-submit-button" class="btn btn-primary w-100"> Create Auction </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

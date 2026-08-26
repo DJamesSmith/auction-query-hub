@@ -1,0 +1,29 @@
+{% if results %}
+    <div class="compact-table">
+        <table class="table table-sm analytics-table mb-0">
+            <thead>
+                <tr>
+                    <th>Seller</th>
+                    <th>Auction</th>
+
+                    {% if search_type == "price" %}
+                        <th>Price</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                    <tr>
+                        <td>{{ result.username }}</td>
+                        <td>{{ result.title }}</td>
+                        {% if search_type == "price" %}
+                            <td>₹{{ result.current_price }}</td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <div class="text-center text-muted py-4"> {{ empty_message }} </div>
+{% endif %}

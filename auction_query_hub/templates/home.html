@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %} User Management {% endblock %}
+
+{% block content %}
+    <!-- <div class="container-fluid mt-4">  -->       <!-- Takes the entire width of screen -->
+        <div class="container mt-4">
+            <!--  HEADER & NAVIGATION  -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2> Auction Query HUB </h2>
+                    <p class="text-muted mb-0"> User, auction and raw SQL query management dashboard </p>
+                </div>
+            </div>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row g-3 justify-content-around">
+                        <div class="col-md-4">
+                            <a href="{% url 'user_list' %}" class="btn btn-outline-primary w-100"> Manage Users </a>
+                        </div>
+                        <div class="col-md-4">
+                            <a href="{% url 'auction_list' %}" class="btn btn-outline-success w-100"> Manage Auctions </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--  USER TABLE  -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"> Users </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Created At</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                    <tr>
+                                        <td> {{ user.id }} </td>
+                                        <td> {{ user.username }} </td>
+                                        <td> {{ user.email }} </td>
+                                        <td> {{ user.role }} </td>
+                                        <td> {{ user.created_at }} </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted"> No users available. </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!--  AUCTION TABLE  -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"> Auctions </h5> 
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>Seller</th>
+                                    <th>Starting Price</th>
+                                    <th>Current Price</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for auction in auctions %}
+                                    <tr>
+                                        <td> {{ auction.id }} </td>
+                                        <td> {{ auction.title }} </td>
+                                        <td> {{ auction.seller_username }} </td>       <!--  auction.username -->
+                                        <td> {{ auction.base_price }} </td>
+                                        <td> {{ auction.current_price }} </td>
+                                        <td> {{ auction.start_time }} </td>
+                                        <td> {{ auction.end_time }} </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="7" class="text-center text-muted"> No auctions available. </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- </div> -->
+{% endblock %}

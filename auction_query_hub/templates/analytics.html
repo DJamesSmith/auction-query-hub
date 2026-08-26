@@ -1,0 +1,408 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Analytics Dashboard {% endblock %}
+
+{% block content %}
+    <div class="container-fluid mt-3">
+        <div class="analytics-container">
+            <!-- HEADER -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h3 class="mb-1"> SQL Analytics Dashboard </h3>
+                    <span class="muted-small"> Auction Query HUB · PostgreSQL </span>
+                </div>
+                <a href="{% url 'home' %}" class="btn btn-sm btn-outline-secondary"> Back to Home </a>
+            </div>
+
+
+            <!-- KPI STATISTICS -->
+            <div class="row row-cols-2 row-cols-md-3 row-cols-lg-6 g-2 mb-3">
+                <div class="col">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Users</div>
+                        <p class="stat-value"> {{ total_users|default:"0" }} </p>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="stat-card">
+                        <div class="stat-label">Buyers</div>
+                        <p class="stat-value"> {{ total_buyers|default:"0" }} </p>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="stat-card">
+                        <div class="stat-label">Sellers</div>
+                        <p class="stat-value"> {{ total_sellers|default:"0" }} </p>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Auctions</div>
+                        <p class="stat-value"> {{ total_auctions|default:"0" }} </p>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="stat-card">
+                        <div class="stat-label">Active Auctions</div>
+                        <p class="stat-value"> {{ active_auctions_count|default:"0" }} </p>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Value</div>
+                        <p class="stat-value"> ₹{{ total_auction_value|default:"0.00" }} </p>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- USER + SELLER ANALYTICS -->
+            <div class="row g-3 mb-3">
+                <!-- USERS BY ROLE -->
+                <div class="col-lg-4">
+                    <div class="card analytics-card h-100">
+                        <div class="card-header"> Users By Role </div>
+                        <div class="card-body">
+                            <table class="table table-sm analytics-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Role</th>
+                                        <th class="text-end"> Users </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for role in role_statistics %}
+                                        <tr>
+                                            <td> {{ role.role }} </td>
+                                            <td class="text-end"> {{ role.total_users }} </td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="2" class="text-center text-muted"> No role data. </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AUCTION COUNT PER SELLER -->
+                <div class="col-lg-4">
+                    <div class="card analytics-card h-100">
+                        <div class="card-header"> Auction Count Per Seller </div>
+                        <div class="card-body">
+                            <table class="table table-sm analytics-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Seller</th>
+                                        <th class="text-end"> Auctions </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for seller in auction_count_per_seller %}
+                                        <tr>
+                                            <td> {{ seller.username }} </td>
+                                            <td class="text-end"> {{ seller.total_auctions }} </td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="2" class="text-center text-muted"> No seller data. </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MULTIPLE AUCTION SELLERS -->
+                <div class="col-lg-4">
+                    <div class="card analytics-card h-100">
+                        <div class="card-header"> Sellers With Multiple Auctions </div>
+                        <div class="card-body">
+                            <table class="table table-sm analytics-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Seller</th>
+                                        <th class="text-end"> Auctions </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for seller in multiple_auction_sellers %}
+                                        <tr>
+                                            <td> {{ seller.username }} </td>
+                                            <td class="text-end"> {{ seller.total_auctions }} </td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="2" class="text-center text-muted"> No sellers found. </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- HIGHLIGHTS -->
+            <div class="row g-3 mb-3">
+                <!-- TOP SELLER -->
+                <div class="col-lg-4">
+                    <div class="card analytics-card h-100">
+                        <div class="card-header"> Top Seller </div>
+                        <div class="card-body">
+                            {% if top_seller %}
+                                <div class="highlight-value"> {{ top_seller.username }} </div>
+                                <div class="highlight-label">
+                                    {{ top_seller.total_auctions }}
+                                    auction{{ top_seller.total_auctions|pluralize }}
+                                </div>
+                            {% else %}
+                                <span class="muted-small"> No seller data available. </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- HIGHEST AUCTION -->
+                <div class="col-lg-4">
+                    <div class="card analytics-card h-100">
+                        <div class="card-header"> Highest Auction </div>
+                        <div class="card-body">
+                            {% if highest_auction %}
+                                <div class="highlight-value"> ₹{{ highest_auction.current_price }} </div>
+                                <div class="mb-1"> {{ highest_auction.title }} </div>
+                                <div class="highlight-label"> Seller: {{ highest_auction.username }} </div>
+                            {% else %}
+                                <span class="muted-small"> No auction data available. </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LATEST AUCTION -->
+                <div class="col-lg-4">
+                    <div class="card analytics-card h-100">
+                        <div class="card-header"> Latest Auction </div>
+                        <div class="card-body">
+                            {% if latest_auction %}
+                                <div class="highlight-value"> {{ latest_auction.title }} </div>
+                                <div class="highlight-label"> Seller: {{ latest_auction.username }} </div>
+                                <div class="highlight-label"> {{ latest_auction.start_time }} </div>
+                            {% else %}
+                                <span class="muted-small"> No auction data available. </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- ACTIVE AUCTIONS -->
+            <div class="card analytics-card mb-3">
+                <div class="card-header d-flex justify-content-between">
+                    <span> Active Auctions </span>
+                    <span class="badge text-bg-success"> {{ active_auctions_count|default:"0" }} </span>
+                </div>
+                <div class="card-body">
+                    <div class="compact-table">
+                        <table class="table table-sm table-hover analytics-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Seller</th>
+                                    <th>Auction</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for auction in active_auctions %}
+                                    <tr>
+                                        <td> {{ auction.username }} </td>
+                                        <td> {{ auction.title }} </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="2" class="text-center text-muted"> No active auctions. </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- SELLER VALUE ANALYTICS -->
+            <div class="row g-3 mb-3">
+                <!-- TOTAL VALUE -->
+                <div class="col-lg-6">
+                    <div class="card analytics-card h-100">
+                        <div class="card-header"> Total Auction Value Per Seller </div>
+                        <div class="card-body">
+                            <table class="table table-sm analytics-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Seller</th>
+                                        <th class="text-end"> Total Value </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for seller in auction_value_per_seller %}
+                                        <tr>
+                                            <td> {{ seller.username }} </td>
+                                            <td class="text-end"> ₹{{ seller.total_auction_value }} </td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="2" class="text-center text-muted"> No value data. </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- HIGH VALUE SELLERS -->
+                <div class="col-lg-6">
+                    <div class="card analytics-card h-100">
+                        <div class="card-header"> High-Value Sellers </div>
+                        <div class="card-body">
+                            <table class="table table-sm analytics-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Seller</th>
+                                        <th class="text-end"> Total Value </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for seller in high_value_sellers %}
+                                        <tr>
+                                            <td> {{ seller.username }} </td>
+                                            <td class="text-end"> ₹{{ seller.total_auction_value }} </td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="2" class="text-center text-muted"> No high-value sellers. </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- INACTIVE SELLERS -->
+            <div class="card analytics-card mb-3">
+                <div class="card-header"> Inactive Sellers </div>
+                <div class="card-body">
+                    <div class="compact-table">
+                        <table class="table table-sm analytics-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for seller in inactive_sellers %}
+                                    <tr>
+                                        <td> {{ seller.id }} </td>
+                                        <td> {{ seller.username }} </td>
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="2" class="text-center text-muted"> No inactive sellers. </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- QUERY EXPLORER -->
+            <div class="card analytics-card mb-5">
+                <div class="card-header"> SQL Query Explorer </div>
+                <div class="card-body">
+                    <!-- SEARCH QUERY FORMS -->
+                    <div class="row g-3">
+                        <!-- PRICE RANGE -->
+                        <div class="col-lg-4">
+                            <div class="border rounded p-3 h-100">
+                                <h6 class="mb-3"> Auction Price Range </h6>
+                                <form id="price-range-form" data-url="{% url 'price_range_search' %}">
+                                    <div class="mb-2">
+                                        <label class="form-label small"> Minimum Price </label>
+                                        <input type="number" name="minimum_price" class="form-control form-control-sm" step="0.01" min="0" value="{{ minimum_price|default:'' }}">
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label small"> Maximum Price </label>
+                                        <input type="number" name="maximum_price" class="form-control form-control-sm" step="0.01" min="0" value="{{ maximum_price|default:'' }}">
+                                    </div>
+                                    <button type="submit" id="price-range-button" class="btn btn-sm btn-primary" disabled> Search </button>
+                                </form>
+                                <div id="price-range-message" class="alert d-none mt-3" role="alert"></div>
+                            </div>
+                        </div>
+
+                        <!-- SELLER SEARCH -->
+                        <div class="col-lg-4">
+                            <div class="border rounded p-3 h-100">
+                                <h6 class="mb-3"> Seller Search </h6>
+                                <form id="seller-search-form" data-url="{% url 'seller_search' %}">
+                                    <div class="mb-2">
+                                        <label class="form-label small"> Username Prefix </label>
+                                        <input type="text" name="seller_prefix" class="form-control form-control-sm" placeholder="e.g. rah" value="{{ seller_prefix|default:'' }}">
+                                    </div>
+                                    <button type="submit" id="seller-search-button" class="btn btn-sm btn-primary" disabled> Search </button>
+                                </form>
+                                <div id="seller-search-message" class="alert d-none mt-3" role="alert"></div>
+                            </div>
+                        </div>
+
+                        <!-- AUCTION TITLE SEARCH -->
+                        <div class="col-lg-4">
+                            <div class="border rounded p-3 h-100">
+                                <h6 class="mb-3"> Auction Title Search (case sensitive) </h6>
+                                    <form id="auction-title-search-form" data-url="{% url 'auction_title_search' %}">
+                                    <div class="mb-2">
+                                        <label class="form-label small"> Title Keyword </label>
+                                        <input type="text" name="auction_keyword" class="form-control form-control-sm" placeholder="e.g. phone" value="{{ auction_keyword|default:'' }}">
+                                    </div>
+                                    <button type="submit" id="auction-title-search-button" class="btn btn-sm btn-primary" disabled> Search </button>
+                                </form>
+                                <div id="auction-title-message" class="alert d-none mt-3" role="alert"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- QUERY SEARCH RESULTS TABLE -->
+                    <hr class="my-4">
+                    <div id="search-results" class="card mb-4 mt-4">
+                        <div class="card-header d-flex justify-content-between align-items-center"> <h5 class="mb-0"> Query Results </h5> </div>
+                        <div class="card-body">
+                            <div class="text-center text-muted py-4">
+                                <p class="mb-1"> No search query has been executed yet. </p>
+                                <small> Enter a search query from the SQL Query Explorer to display its results here. </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RESULTS Table -->
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/analytics.css' %}">
+{% endblock %}

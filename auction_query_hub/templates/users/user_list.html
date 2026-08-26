@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %} List of Users {% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h2 class="mb-4"> User Management </h2>
+        <form method="GET" class="row g-3 mb-4">
+            <div class="col-md-4">
+                <input type="text" name="search" value="{{ search_term }}" class="form-control" placeholder="Search username...">
+            </div>
+
+            <div class="col-md-2">
+                <select name="role" class="form-select">
+                    <option value=""> All Roles </option>
+                    {% for role in roles %}
+                        <option value="{{ role.role }}"
+                            {% if selected_role == role.role %}
+                                selected
+                            {% endif %}> {{ role.role }} </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2"> <button type="submit" class="btn btn-primary w-100"> Search </button> </div>
+            <div class="col-md-2"> <a href="{% url 'user_list' %}" class="btn btn-secondary w-100"> Reset </a> </div>
+            <div class="col-md-2"> <a href="{% url 'create_user' %}" class="btn btn-warning w-100"> Add New </a> </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td> {{ user.id }} </td>
+                            <td> {{ user.username }} </td>
+                            <td> {{ user.email }} </td>
+                            <td> {{ user.role }} </td>
+                            <td>
+                                <!-- Update User -->
+                                <form method="POST" action="{% url 'update_user' user.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <select name="role" class="form-select form-select-sm d-inline-block" style="width: 110px;">
+                                        {% for role in roles %}
+                                            <option value="{{ role.role }}"
+                                                {% if user.role == role.role %}
+                                                    selected
+                                                {% endif %}> {{ role.role }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+
+                                    <button type="submit" class="btn btn-sm btn-warning"> Update </button>
+                                </form>
+
+                                <!-- Delete User -->
+                                <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this user?');"> Delete </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center"> No users found. </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if not search_term and not selected_role %}
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page|add:'-1' }}"> Previous </a>
+                        </li>
+                    {% endif %}
+
+                    <li class="page-item active">
+                        <span class="page-link"> {{ page }} </span>
+                    </li>
+
+                    {% if has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page|add:'1' }}"> Next </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    </div>
+{% endblock %}

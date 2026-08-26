@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %} Auction Management {% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2>Auction Management</h2>
+                <p class="text-muted mb-0"> Manage and inspect auction records </p>
+            </div>
+            <a href="{% url 'create_auction' %}" class="btn btn-success"> Create Auction </a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Base Price</th>
+                            <th>Current Price</th>
+                            <th>Seller</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for auction in auctions %}
+                            <tr>
+                                <td> {{ auction.id }} </td>
+                                <td> {{ auction.title }} </td>
+                                <td> {{ auction.description }} </td>
+                                <td> ₹{{ auction.base_price }} </td>
+                                <td> ₹{{ auction.current_price }} </td>
+                                <td> {{ auction.username }} </td>
+                                <td> {{ auction.start_time }} </td>
+                                <td> {{ auction.end_time }} </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="8" class="text-center text-muted py-4"> No auctions found. </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
