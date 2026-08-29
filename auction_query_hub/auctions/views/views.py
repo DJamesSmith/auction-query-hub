@@ -7,7 +7,7 @@ from ..services import get_all_auction_details_with_seller
 def auction_list(request: HttpRequest) -> HttpResponse:
     auctions: list[dict] = get_all_auction_details_with_seller()
     context: dict = {
-        "auctions": auctions,
+        "auctions": auctions, 
     }
     return render(request, "auctions/auction_list.html", context)
 

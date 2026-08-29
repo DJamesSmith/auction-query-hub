@@ -14,3 +14,6 @@ class AuctionItem(models.Model):
 
     class Meta:
         db_table = "auction_items"
+
+# related_name="auctions"
+# This controls the reverse direction. With this we can do: "user.auctions.all()"
