@@ -85,7 +85,7 @@
                                     <tr>
                                         <td> {{ auction.id }} </td>
                                         <td> {{ auction.title }} </td>
-                                        <td> {{ auction.seller_username }} </td>       <!--  auction.username -->
+                                        <td> {{ auction.seller.username }} </td>       <!--  auction.username -->
                                         <td> {{ auction.base_price }} </td>
                                         <td> {{ auction.current_price }} </td>
                                         <td> {{ auction.start_time }} </td>
@@ -94,6 +94,55 @@
                                 {% empty %}
                                     <tr>
                                         <td colspan="7" class="text-center text-muted"> No auctions available. </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reverse Relationship: ----- meaning of "related_name="auctions" ----- Access auctions from users table -->
+            <div class="card mb-4">
+                <div class="card-header"> <h5 class="mb-0">User Auctions (Reverse Relationship)</h5> </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>User ID</th>
+                                    <th>Username</th>
+                                    <th>Auction ID</th>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Starting Price</th>
+                                    <th>Current Price</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in users %}
+                                    {% for auction in user.auctions.all %}
+                                        <tr>
+                                            <td>{{ user.id }}</td>
+                                            <td>{{ user.username }}</td>
+                                            <td>{{ auction.id }}</td>
+                                            <td>{{ auction.title }}</td>
+                                            <td>{{ auction.description }}</td>
+                                            <td>{{ auction.base_price }}</td>
+                                            <td>{{ auction.current_price }}</td>
+                                            <td>{{ auction.start_time }}</td>
+                                            <td>{{ auction.end_time }}</td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="9" class="text-center text-muted"> This user has no auctions. </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="9" class="text-center text-muted"> No users available. </td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

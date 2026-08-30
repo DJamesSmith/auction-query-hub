@@ -1,9 +1,9 @@
 from django.http import JsonResponse, HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
-from django.contrib.auth.hashers import make_password
+from django.db.models import QuerySet
+from auctions.models import AuctionItem
 from ..models import User
 from ..forms import UserForm
-from auctions.services import get_all_auctions
 from ..services import (
     get_all_users,
     delete_user,
@@ -15,9 +15,23 @@ from ..services import (
 )
 
 
+# def home(request: HttpRequest) -> HttpResponse:
+#     users: QuerySet[User] = User.objects.all()
+#     auctions: QuerySet[AuctionItem] = AuctionItem.objects.all()
+#     user_auctions = User.objects.prefetch_related("auctions")
+
+#     context: dict = {
+#         "users": users,
+#         "auctions": auctions,
+#         "user_auctions": user_auctions,
+#     }
+
+#     return render(request, "home.html", context)
+
 def home(request: HttpRequest) -> HttpResponse:
-    users: list[dict] = get_all_users()
-    auctions: list[dict] = get_all_auctions()
+    users: QuerySet[User] = User.objects.prefetch_related("auctions")
+    auctions: QuerySet[AuctionItem] = AuctionItem.objects.select_related("seller")
+    # user_auctions = user.auctions.all()                   # returns AuctionItem objects belonging to that particular user. It does not return a single auction.
 
     context: dict = {
         "users": users,

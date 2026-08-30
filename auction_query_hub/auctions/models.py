@@ -9,11 +9,10 @@ class AuctionItem(models.Model):
     start_time = models.TimeField()             # When the auction becomes active
     end_time = models.TimeField()               # When the auction closes
 
-    # seller field parameter: related_name is used for the invocation of view. Usually it's used for that purpose
     seller = models.ForeignKey(User, on_delete=models.CASCADE, db_column="seller_id", related_name="auctions") # Foreign Key: seller_id
 
     class Meta:
         db_table = "auction_items"
 
 # related_name="auctions"
-# This controls the reverse direction. With this we can do: "user.auctions.all()"
+# This controls the reverse direction. With this we can do: "user.auctions.all()". It defines the reverse ORM accessor.

@@ -6,19 +6,14 @@ from ..services import get_all_auction_details_with_seller
 
 def auction_list(request: HttpRequest) -> HttpResponse:
     auctions: list[dict] = get_all_auction_details_with_seller()
-    context: dict = {
-        "auctions": auctions, 
-    }
-    return render(request, "auctions/auction_list.html", context)
+    return render(request, "auctions/auction_list.html", { "auctions": auctions })
 
 
 def create_auction(request: HttpRequest) -> JsonResponse:
+    # Render the form with input fields in the templates
     if request.method == "GET":
         form: AuctionForm = AuctionForm()
-        context: dict = {
-            "form": form,
-        }
-        return render(request, "auctions/auction_form.html", context)
+        return render(request, "auctions/auction_form.html", { "form": form })
 
     if request.method == "POST":
         form: AuctionForm = AuctionForm(request.POST)
