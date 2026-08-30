@@ -14,24 +14,10 @@ from ..services import (
     update_user_role,
 )
 
-
-# def home(request: HttpRequest) -> HttpResponse:
-#     users: QuerySet[User] = User.objects.all()
-#     auctions: QuerySet[AuctionItem] = AuctionItem.objects.all()
-#     user_auctions = User.objects.prefetch_related("auctions")
-
-#     context: dict = {
-#         "users": users,
-#         "auctions": auctions,
-#         "user_auctions": user_auctions,
-#     }
-
-#     return render(request, "home.html", context)
-
 def home(request: HttpRequest) -> HttpResponse:
     users: QuerySet[User] = User.objects.prefetch_related("auctions")
     auctions: QuerySet[AuctionItem] = AuctionItem.objects.select_related("seller")
-    # user_auctions = user.auctions.all()                   # returns AuctionItem objects belonging to that particular user. It does not return a single auction.
+    # user_auctions = user.auctions.all()       # returns AuctionItem objects belonging to that particular user. It does not return a single auction.
 
     context: dict = {
         "users": users,
