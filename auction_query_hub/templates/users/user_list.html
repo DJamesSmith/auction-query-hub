@@ -5,10 +5,9 @@
     <div class="container mt-5">
         <h2 class="mb-4"> User Management </h2>
         <form method="GET" class="row g-3 mb-4">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <input type="text" name="search" value="{{ search_term }}" class="form-control" placeholder="Search username...">
             </div>
-
             <div class="col-md-2">
                 <select name="role" class="form-select">
                     <option value=""> All Roles </option>
@@ -20,9 +19,15 @@
                     {% endfor %}
                 </select>
             </div>
+            <div class="col-md-2">
+                <select name="show_deleted" class="form-select">
+                    <option value="false" {% if show_deleted == "false" %}selected{% endif %}>Active Users</option>
+                    <option value="true" {% if show_deleted == "true" %}selected{% endif %}>Deleted Users</option>
+                </select>
+            </div>
             <div class="col-md-2"> <button type="submit" class="btn btn-primary w-100"> Search </button> </div>
             <div class="col-md-2"> <a href="{% url 'user_list' %}" class="btn btn-secondary w-100"> Reset </a> </div>
-            <div class="col-md-2"> <a href="{% url 'create_user' %}" class="btn btn-success w-100"> Add New </a> </div>
+            <div class="col-md-1"> <a href="{% url 'create_user' %}" class="btn btn-success w-100"> Add </a> </div>
         </form>
 
         <div class="table-responsive">
@@ -33,6 +38,7 @@
                         <th>Username</th>
                         <th>Email</th>
                         <th>Role</th>
+                        <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -44,32 +50,46 @@
                             <td> {{ user.email }} </td>
                             <td> {{ user.role }} </td>
                             <td>
-                                <!-- Update User -->
-                                <form method="POST" action="{% url 'update_user' user.id %}" class="d-inline">
-                                    {% csrf_token %}
-                                    <select name="role" class="form-select form-select-sm d-inline-block" style="width: 110px;">
-                                        {% for role in roles %}
-                                            <option value="{{ role.role }}"
-                                                {% if user.role == role.role %}
-                                                    selected
-                                                {% endif %}> {{ role.role }}
-                                            </option>
-                                        {% endfor %}
-                                    </select>
+                                {% if user.status %}
+                                    <span class="badge bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Deleted</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.status %}
+                                    <!-- Update User (only for active users) -->
+                                    <form method="POST" action="{% url 'update_user' user.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <select name="role" class="form-select form-select-sm d-inline-block" style="width: 110px;">
+                                            {% for role in roles %}
+                                                <option value="{{ role.role }}"
+                                                    {% if user.role == role.role %}
+                                                        selected
+                                                    {% endif %}> {{ role.role }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-warning"> Update </button>
+                                    </form>
 
-                                    <button type="submit" class="btn btn-sm btn-warning"> Update </button>
-                                </form>
-
-                                <!-- Delete User -->
-                                <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this user?');"> Delete </button>
-                                </form>
+                                    <!-- Delete User -->
+                                    <form method="POST" action="{% url 'delete_user' user.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this user?');"> Delete </button>
+                                    </form>
+                                {% else %}
+                                    <!-- Restore User (for deleted users) -->
+                                    <form method="POST" action="{% url 'restore_user' user.id %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Restore this user?');"> Restore </button>
+                                    </form>
+                                {% endif %}
                             </td>
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="5" class="text-center"> No users found. </td>
+                            <td colspan="6" class="text-center"> No users found. </td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -77,7 +97,7 @@
         </div>
 
         <!-- Pagination -->
-        {% if not search_term and not selected_role %}
+        {% if not search_term and not selected_role and show_deleted == "false" %}
             <nav class="mt-4">
                 <ul class="pagination justify-content-center">
                     {% if page > 1 %}

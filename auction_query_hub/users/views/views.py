@@ -10,13 +10,14 @@ from ..services import (
     get_users_with_pagination,
     search_users_case_insensitive,
     update_user_role,
+    restore_user,
+    get_soft_deleted_users,
 )
 
 def home(request: HttpRequest) -> HttpResponse:
     users: QuerySet[User] = User.objects.filter(status=True).prefetch_related("auctions")
-    auctions: QuerySet[AuctionItem] = AuctionItem.objects.select_related("seller")
-    # user_auctions = user.auctions.all()       # returns AuctionItem objects belonging to that particular user. It does not return a single auction.
-
+    auctions: QuerySet[AuctionItem] = AuctionItem.objects.select_related("seller").filter(seller__status=True)
+    
     context: dict = {
         "users": users,
         "auctions": auctions,
@@ -34,7 +35,6 @@ def create_user(request: HttpRequest) -> JsonResponse:
         form = UserForm(request.POST)
         if form.is_valid():
             user: User = form.save(commit=False)
-            # user.password = make_password(form.cleaned_data["password"])
             user.password = form.cleaned_data["password"]
             user.save()
 
@@ -50,7 +50,7 @@ def create_user(request: HttpRequest) -> JsonResponse:
                 }, status=201)
         return JsonResponse({
                 "success": False,
-                "errors": form.errors.get_json_data(),      # returns something structured like: { "email": [{ "message": "User with this Email already exists.", "code": "unique" }]}
+                "errors": form.errors.get_json_data(),
             }, status=400)
     return JsonResponse({
             "success": False,
@@ -61,19 +61,27 @@ def create_user(request: HttpRequest) -> JsonResponse:
 def user_list(request: HttpRequest) -> HttpResponse:
     search_term: str = request.GET.get("search", "").strip()
     role: str = request.GET.get("role", "").strip()
-    users = User.objects.filter(status=True)
-
+    show_deleted: str = request.GET.get("show_deleted", "false").strip()
+    
     page: int = int(request.GET.get("page", 1))
     page_size: int = 10
     offset: int = (page - 1) * page_size
     roles: list[dict] = get_distinct_roles()
     has_next: bool = False
 
+    # Base query - show active users by default
+    if show_deleted.lower() == "true":
+        users = get_soft_deleted_users()  # Show deleted users
+    else:
+        users = User.objects.filter(status=True)  # Show active users
+
     if search_term:
         users = search_users_case_insensitive(search_term)
+        if show_deleted.lower() == "false":
+            users = [u for u in users if u.get("status", True) is True]
     elif role:
-        users: list[dict] = get_users_by_role(role)
-    else:
+        users = get_users_by_role(role)
+    elif show_deleted.lower() != "true":
         users = get_users_with_pagination(limit=page_size, offset=offset)
         has_next = len(users) == page_size
 
@@ -85,9 +93,11 @@ def user_list(request: HttpRequest) -> HttpResponse:
         "page": page,
         "page_size": page_size,
         "has_next": has_next,
+        "show_deleted": show_deleted,
     }
 
     return render(request, "users/user_list.html", context)
+
 
 def update_user(request: HttpRequest, user_id: int) -> HttpResponse:
     if request.method == "POST":
@@ -100,6 +110,17 @@ def update_user(request: HttpRequest, user_id: int) -> HttpResponse:
 def delete_user_view(request: HttpRequest, user_id: int) -> HttpResponse:
     if request.method == "POST":
         user: User = get_object_or_404(User, id=user_id)
-        user.status = False
-        user.save()
+        if user.status:  # Only soft delete if active
+            user.status = False
+            user.save()
+    return redirect("user_list")
+
+
+# Restore a soft-deleted user
+def restore_user_view(request: HttpRequest, user_id: int) -> HttpResponse:
+    if request.method == "POST":
+        restored_count = restore_user(user_id)
+        if restored_count > 0:
+            # Optionally add a message here
+            pass
     return redirect("user_list")

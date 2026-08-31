@@ -1,23 +1,36 @@
 {% if results %}
-    <div class="compact-table">
-        <table class="table table-sm analytics-table mb-0">
+    <div class="table-responsive">
+        <table class="table table-sm table-bordered table-striped">
             <thead>
                 <tr>
-                    <th>Seller</th>
-                    <th>Auction</th>
-
+                    <th>#</th>
                     {% if search_type == "price" %}
-                        <th>Price</th>
+                        <th>Seller</th>
+                        <th>Title</th>
+                        <th>Current Price</th>
+                    {% elif search_type == "seller" %}
+                        <th>Seller</th>
+                        <th>Title</th>
+                    {% elif search_type == "title" %}
+                        <th>Seller</th>
+                        <th>Title</th>
                     {% endif %}
                 </tr>
             </thead>
             <tbody>
                 {% for result in results %}
                     <tr>
-                        <td>{{ result.username }}</td>
-                        <td>{{ result.title }}</td>
+                        <td>{{ forloop.counter }}</td>
                         {% if search_type == "price" %}
-                            <td>₹{{ result.current_price }}</td>
+                            <td>{{ result.seller_username }}</td>
+                            <td>{{ result.auction_title }}</td>
+                            <td>₹{{ result.auction_price }}</td>
+                        {% elif search_type == "seller" %}
+                            <td>{{ result.seller_username }}</td>
+                            <td>{{ result.auction_title }}</td>
+                        {% elif search_type == "title" %}
+                            <td>{{ result.seller_username }}</td>
+                            <td>{{ result.auction_title }}</td>
                         {% endif %}
                     </tr>
                 {% endfor %}
@@ -25,5 +38,7 @@
         </table>
     </div>
 {% else %}
-    <div class="text-center text-muted py-4"> {{ empty_message }} </div>
+    <div class="text-center text-muted py-3">
+        <p>{{ empty_message|default:"No results found." }}</p>
+    </div>
 {% endif %}

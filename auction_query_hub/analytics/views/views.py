@@ -5,11 +5,8 @@ from django.template.loader import render_to_string
 from users.services import (
     count_users,
     count_buyers,
-
-    # Analytics
     get_user_count_by_role,
 )
-
 from auctions.services import (
     get_all_auctions,
     get_auction_count_per_seller,
@@ -146,6 +143,7 @@ def price_range_search(request: HttpRequest) -> JsonResponse:
 
 def seller_search(request: HttpRequest) -> JsonResponse:
     seller_prefix = request.GET.get("seller_prefix", "").strip()
+    print(f"seller_prefix: {seller_prefix}")
 
     if not seller_prefix:
         return JsonResponse({
@@ -154,6 +152,7 @@ def seller_search(request: HttpRequest) -> JsonResponse:
         }, status=400)
 
     results: list[dict] = get_auctions_by_seller_username_prefix(seller_prefix)
+    print(f"results: {results}")
     context: dict = {
         "results": results,
         "search_type": "seller",
@@ -179,6 +178,7 @@ def auction_title_search(request: HttpRequest) -> JsonResponse:
         }, status=400)
 
     results = get_auctions_with_title_containing(keyword)
+    print(f"results: {results}")
     context: dict = {
         "results": results,
         "search_type": "title",

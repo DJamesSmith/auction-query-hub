@@ -8,6 +8,7 @@ urlpatterns = [
     path( "create/", views.create_user, name="create_user"),
     path("<int:user_id>/update/", views.update_user, name="update_user"),
     path("<int:user_id>/delete/", views.delete_user_view, name="delete_user"),
+    path('users/<int:user_id>/restore/', views.restore_user_view, name='restore_user'),
 
     # APIs
     path("api/", api_views.user_api_list, name="api_user_list"),
