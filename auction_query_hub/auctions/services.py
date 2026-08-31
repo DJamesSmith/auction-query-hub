@@ -186,17 +186,15 @@ def get_auctions_between_prices(minimum_price: float, maximum_price: float) -> l
 
 # QUERY 16 — LIKE: select_sellers_starting_with_seller__username
 def get_auctions_by_seller_username_prefix(prefix: str) -> list[dict]:
-    print(f"prefix: {prefix}")
-    filtered_list = list(
+    return list(
         AuctionItem.objects
         .filter(
-            seller__username__startswith=prefix,
+            seller__username__istartswith=prefix,
             seller__status=True)
         .annotate(
             seller_username=F("seller__username"),
             auction_title=F("title"))
         .values("seller_username", "auction_title"))
-    return filtered_list
 
 
 # QUERY 17 — LIKE: select_auction_titles_containing_phone
