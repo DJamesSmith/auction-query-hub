@@ -10,13 +10,15 @@ from .models import AuctionItem
 
 # Get all auctions: get_all_auctions_query
 def get_all_auctions() -> list[dict]:
-    return list(AuctionItem.objects.values())
+    # Only return auctions from active sellers
+    return list(AuctionItem.objects.filter(seller__status=True).values())
 
 
 # QUERY 01 — INNER JOIN: select_username_and_title
 def get_username_and_auction_title() -> list[dict]:
     return list(
         AuctionItem.objects
+        .filter(seller__status=True)  # Only active sellers
         .values(username=F("seller__username"), title=F("title")))
 
 
@@ -24,6 +26,7 @@ def get_username_and_auction_title() -> list[dict]:
 def get_seller_name_and_auction_title() -> list[dict]:
     return list(
         AuctionItem.objects
+        .filter(seller__status=True)  # Only active sellers
         .values(username=F("seller__username"), title=F("title")))
 
 
@@ -31,6 +34,7 @@ def get_seller_name_and_auction_title() -> list[dict]:
 def get_all_auction_details_with_seller() -> list[dict]:
     return list(
         AuctionItem.objects
+        .filter(seller__status=True)  # Only active sellers
         .annotate(username=F("seller__username"))
         .values("id", "title", "description", "base_price", "current_price", "start_time", "end_time", "seller_id", "username"))
 
@@ -39,7 +43,7 @@ def get_all_auction_details_with_seller() -> list[dict]:
 def get_auctions_by_username(username: str) -> list[dict]:
     return list(
         AuctionItem.objects
-        .filter(seller__username=username)
+        .filter(seller__username=username, seller__status=True)  # Only active seller
         .values())
 
 
@@ -47,7 +51,7 @@ def get_auctions_by_username(username: str) -> list[dict]:
 def get_auctions_by_seller_role(role: str = "Seller") -> list[dict]:
     return list(
         AuctionItem.objects
-        .filter(seller__role=role)
+        .filter(seller__role=role, seller__status=True)  # Only active sellers
         .values(username=F("seller__username"), title=F("title")))
 
 
@@ -55,6 +59,7 @@ def get_auctions_by_seller_role(role: str = "Seller") -> list[dict]:
 def get_all_users_with_auctions() -> list[dict]:
     return list(
         User.objects
+        .filter(status=True)  # Only active users
         .values("username", "auctions__title"))
 
 
@@ -62,7 +67,7 @@ def get_all_users_with_auctions() -> list[dict]:
 def get_users_without_auctions() -> list[dict]:
     return list(
         User.objects
-        .filter(auctions__isnull=True)
+        .filter(status=True, auctions__isnull=True)  # Only active users
         .values())
 
 
@@ -70,6 +75,7 @@ def get_users_without_auctions() -> list[dict]:
 def get_auction_count_per_user() -> list[dict]:
     return list(
         User.objects
+        .filter(status=True)  # Only active users
         .annotate(total_auctions=Count("auctions"))
         .values("username", "total_auctions"))
 
@@ -78,7 +84,7 @@ def get_auction_count_per_user() -> list[dict]:
 def get_auction_count_per_seller() -> list[dict]:
     return list(
         User.objects
-        .filter(auctions__isnull=False)
+        .filter(status=True, auctions__isnull=False)  # Only active sellers
         .annotate(total_auctions=Count("auctions"))
         .values("username", "total_auctions"))
 
@@ -87,7 +93,7 @@ def get_auction_count_per_seller() -> list[dict]:
 def get_sellers_with_more_than_one_auction() -> list[dict]:
     return list(
         User.objects
-        .filter(auctions__isnull=False)
+        .filter(status=True, auctions__isnull=False)  # Only active sellers
         .annotate(total_auctions=Count("auctions"))
         .filter(total_auctions__gt=1)
         .values("username", "total_auctions"))
@@ -97,7 +103,7 @@ def get_sellers_with_more_than_one_auction() -> list[dict]:
 def get_total_auction_value_per_seller() -> list[dict]:
     return list(
         User.objects
-        .filter(auctions__isnull=False)
+        .filter(status=True, auctions__isnull=False)  # Only active sellers
         .annotate(total_auction_value=Sum("auctions__current_price"))
         .values("username", "total_auction_value"))
 
@@ -106,6 +112,7 @@ def get_total_auction_value_per_seller() -> list[dict]:
 def get_seller_with_highest_auction() -> list[dict]:
     return list(
         AuctionItem.objects
+        .filter(seller__status=True)  # Only active sellers
         .order_by("-current_price")
         .values(
             username=F("seller__username"),
@@ -118,6 +125,7 @@ def get_seller_with_highest_auction() -> list[dict]:
 def get_latest_auction_with_seller() -> list[dict]:
     return list(
         AuctionItem.objects
+        .filter(seller__status=True)  # Only active sellers
         .order_by("-start_time")
         .values(
             username=F("seller__username"),
@@ -131,6 +139,7 @@ def get_active_auctions() -> list[dict]:
     return list(
         AuctionItem.objects
         .filter(
+            seller__status=True,  # Only active sellers
             end_time__gt=Cast(
                 Now(),
                 output_field=TimeField()))
@@ -143,7 +152,9 @@ def get_active_auctions() -> list[dict]:
 def get_auctions_between_prices(minimum_price: float, maximum_price: float) -> list[dict]:
     return list(
         AuctionItem.objects
-        .filter(current_price__range=(minimum_price, maximum_price))
+        .filter(
+            seller__status=True,  # Only active sellers
+            current_price__range=(minimum_price, maximum_price))
         .values(
             username=F("seller__username"),
             title=F("title"),
@@ -154,7 +165,10 @@ def get_auctions_between_prices(minimum_price: float, maximum_price: float) -> l
 def get_auctions_by_seller_username_prefix(prefix: str) -> list[dict]:
     return list(
         AuctionItem.objects
-        .filter(seller__username__startswith=prefix)
+        .filter(
+            seller__username__startswith=prefix,
+            seller__status=True  # Only active sellers
+        )
         .values(username=F("seller__username"), title=F("title")))
 
 
@@ -162,7 +176,10 @@ def get_auctions_by_seller_username_prefix(prefix: str) -> list[dict]:
 def get_auctions_with_title_containing(keyword: str) -> list[dict]:
     return list(
         AuctionItem.objects
-        .filter(title__contains=keyword)
+        .filter(
+            title__contains=keyword,
+            seller__status=True  # Only active sellers
+        )
         .values(username=F("seller__username"), title=F("title")))
 
 
@@ -170,6 +187,7 @@ def get_auctions_with_title_containing(keyword: str) -> list[dict]:
 def get_users_by_auction_count_descending() -> list[dict]:
     return list(
         User.objects
+        .filter(status=True)  # Only active users
         .annotate(total_auctions=Count("auctions"))
         .values("username", "total_auctions")
         .order_by("-total_auctions"))
@@ -179,7 +197,7 @@ def get_users_by_auction_count_descending() -> list[dict]:
 def get_sellers_without_auctions() -> list[dict]:
     return list(
         User.objects
-        .filter(role="Seller", auctions__isnull=True)
+        .filter(role="Seller", status=True, auctions__isnull=True)  # Only active sellers
         .values("id", "username"))
 
 
@@ -187,6 +205,7 @@ def get_sellers_without_auctions() -> list[dict]:
 def get_seller_with_most_auctions() -> list[dict]:
     return list(
         User.objects
+        .filter(status=True)  # Only active users
         .annotate(total_auctions=Count("auctions"))
         .values("username", "total_auctions")
         .order_by("-total_auctions")[:1])
@@ -196,6 +215,7 @@ def get_seller_with_most_auctions() -> list[dict]:
 def get_sellers_with_total_value_above(minimum_value: float) -> list[dict]:
     return list(
         User.objects
+        .filter(status=True)  # Only active users
         .annotate(total_auction_value=Sum("auctions__current_price"))
         .filter(total_auction_value__gt=minimum_value)
         .values(
@@ -206,25 +226,40 @@ def get_sellers_with_total_value_above(minimum_value: float) -> list[dict]:
 # EXTRAS
 # QUERY 22 - COUNT: count_total_auctions
 def count_auctions() -> int:
-    return AuctionItem.objects.count()
+    return AuctionItem.objects.filter(seller__status=True).count()  # Only auctions from active sellers
 
 
 # QUERY 23 - COUNT + CURRENT_TIME: count_active_auctions
 def count_active_auctions() -> int:
-    return AuctionItem.objects.filter(end_time__gt = Cast(Now(), output_field=TimeField())).count()
+    return AuctionItem.objects.filter(
+        seller__status=True,  # Only active sellers
+        end_time__gt=Cast(Now(), output_field=TimeField())
+    ).count()
 
 
 # QUERY 24 - COUNT + CURRENT_TIME: count_inactive_auctions
 def count_inactive_auctions() -> int:
     return AuctionItem.objects.filter(
+        seller__status=True,  # Only active sellers
         end_time__lte=Cast(
             Now(),
-            output_field=TimeField())).count()
+            output_field=TimeField())
+    ).count()
 
 
 # QUERY 25 - SUM: get_total_auction_value
 def get_total_auction_value() -> Decimal:
-    return AuctionItem.objects.aggregate(
+    return AuctionItem.objects.filter(seller__status=True).aggregate(  # Only auctions from active sellers
         total_auction_value=Coalesce(
             Sum("current_price"),
             Decimal("0")))["total_auction_value"]
+
+
+# ADD NEW FUNCTION: Get auctions from soft-deleted sellers (for admin/audit purposes)
+def get_auctions_from_deleted_sellers() -> list[dict]:
+    """Retrieve auctions from soft-deleted sellers"""
+    return list(
+        AuctionItem.objects
+        .filter(seller__status=False)
+        .annotate(username=F("seller__username"))
+        .values("id", "title", "username", "current_price"))

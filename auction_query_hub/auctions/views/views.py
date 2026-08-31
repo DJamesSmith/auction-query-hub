@@ -5,7 +5,7 @@ from ..models import AuctionItem
 from ..services import get_all_auction_details_with_seller
 
 def auction_list(request: HttpRequest) -> HttpResponse:
-    auctions: list[dict] = get_all_auction_details_with_seller()
+    auctions: list[dict] = AuctionItem.objects.filter(seller__status=True)      # display those auctions whose seller's status is true/active
     return render(request, "auctions/auction_list.html", { "auctions": auctions })
 
 

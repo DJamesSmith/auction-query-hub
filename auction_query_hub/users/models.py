@@ -14,6 +14,7 @@ class User(models.Model):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=255)
     role = models.CharField(max_length=20, choices=Role.choices)
+    status = models.BooleanField(default=True)      # True = active, False = soft-deleted
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
