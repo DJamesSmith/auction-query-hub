@@ -83,10 +83,14 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # analytics is not an app but a folder created manually.
 
-# Add ['192.168.0.100'] to ALLOWED_HOSTS
+# Add ['192.168.0.100'] to ALLOWED_HOSTS depending on the mac's IP address
 
-# Run this command for running on localhost in flutter app:
+# Run this command for running on localhost in flutter app (Means: Django, listen for connections coming through any network interface on port 8000):
 # python manage.py runserver 0.0.0.0:8000
+
+# how to find my Mac's IP ?
+# ipconfig getifaddr en0
+# 192.168.0.105
 
 # Bulk INSERT queries:
 # INSERT INTO users (username, email, password, role, created_at) VALUES
