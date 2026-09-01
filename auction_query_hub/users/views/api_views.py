@@ -19,7 +19,7 @@ def user_api_list(request: Request) -> Response:
             "data": serializer.data
         }, status=status.HTTP_200_OK)
 
-    
+
 @api_view(["POST"])
 def user_api_create(request: Request) -> Response:
     serializer: UserSerializer = UserSerializer(data=request.data)

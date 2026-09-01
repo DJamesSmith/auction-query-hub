@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = True
-ALLOWED_HOSTS = ['127.0.0.1', '192.168.0.100']
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.0.105']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -91,6 +91,7 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 # how to find my Mac's IP ?
 # ipconfig getifaddr en0
 # 192.168.0.105
+# This change is to be made in flutter app's baseurl, django's settings.py
 
 # Bulk INSERT queries:
 # INSERT INTO users (username, email, password, role, created_at) VALUES

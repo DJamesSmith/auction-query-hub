@@ -121,6 +121,19 @@ $(document).ready(function () {
         $(this).val(value)
     })
 
+    // ------------------------- Role Select: enable Update only on change -------------------------
+    $(".role-select").each(function () {
+        // Remember the role this select started with
+        $(this).data("initial-role", $(this).val())
+    })
+
+    $(document).on("change", ".role-select", function () {
+        const initialRole = $(this).data("initial-role")
+        const currentRole = $(this).val()
+        const updateButton = $(this).closest("form").find(".update-btn")
+        updateButton.prop("disabled", currentRole === initialRole)
+    })
+
 
     // ----------------------------- Price Range -----------------------------
     // Input validation

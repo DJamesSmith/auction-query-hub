@@ -8,7 +8,7 @@ class ApiConstants {
   /// Django dev server address, reachable from the Android phone over Wi-Fi.
   /// Do NOT use 127.0.0.1 / localhost here — on the phone those resolve to
   /// the phone itself, not your Mac.
-  static const String baseUrl = 'http://192.168.0.100:8000';
+  static const String baseUrl = 'http://192.168.0.105:8000';
 
   static const String usersEndpoint = '$baseUrl/users/api/';
   static const String createUserEndpoint = '$baseUrl/users/api/create/';

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'api_service.dart';
 import 'models/user.dart';
 
@@ -32,7 +33,6 @@ class _UsersListState extends State<UsersList> {
 
     try {
       final result = await apiService.getUsers();
-
       setState(() {
         users = result;
         isLoading = false;
@@ -67,16 +67,11 @@ class _UsersListState extends State<UsersList> {
       appBar: AppBar(
         title: const Text(
           'Users',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
 
         actions: [
-          IconButton(
-            onPressed: loadUsers,
-            icon: const Icon(Icons.refresh),
-          ),
+          IconButton(onPressed: loadUsers, icon: const Icon(Icons.refresh)),
         ],
       ),
 
@@ -86,9 +81,7 @@ class _UsersListState extends State<UsersList> {
 
   Widget _buildBody() {
     if (isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (error != null) {
@@ -106,14 +99,11 @@ class _UsersListState extends State<UsersList> {
         padding: const EdgeInsets.all(20),
 
         children: [
-
           _buildHeader(),
 
           const SizedBox(height: 20),
 
-          ...users.map(
-            (user) => _buildUserCard(user),
-          ),
+          ...users.map((user) => _buildUserCard(user)),
         ],
       ),
     );
@@ -122,43 +112,30 @@ class _UsersListState extends State<UsersList> {
   Widget _buildHeader() {
     return Row(
       children: [
-
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               const Text(
                 'Registered Users',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
 
               const SizedBox(height: 6),
 
               Text(
                 '${users.length} users found',
-                style: const TextStyle(
-                  color: Colors.grey,
-                ),
+                style: const TextStyle(color: Colors.grey),
               ),
             ],
           ),
         ),
 
         Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 14,
-            vertical: 10,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
 
           decoration: BoxDecoration(
-            color: Theme.of(context)
-                .colorScheme
-                .primary
-                .withOpacity(0.1),
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
             borderRadius: BorderRadius.circular(12),
           ),
 
@@ -197,19 +174,14 @@ class _UsersListState extends State<UsersList> {
 
         child: Row(
           children: [
-
             CircleAvatar(
               radius: 27,
 
-              backgroundColor: Theme.of(context)
-                  .colorScheme
-                  .primary
+              backgroundColor: Theme.of(context).colorScheme.primary
                   .withOpacity(0.1),
 
               child: Text(
-                username.isNotEmpty
-                    ? username[0].toUpperCase()
-                    : '?',
+                username.isNotEmpty ? username[0].toUpperCase() : '?',
 
                 style: TextStyle(
                   fontSize: 20,
@@ -226,7 +198,6 @@ class _UsersListState extends State<UsersList> {
                 crossAxisAlignment: CrossAxisAlignment.start,
 
                 children: [
-
                   Text(
                     username,
                     style: const TextStyle(
@@ -239,10 +210,7 @@ class _UsersListState extends State<UsersList> {
 
                   Text(
                     email,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
-                    ),
+                    style: const TextStyle(fontSize: 14, color: Colors.grey),
                   ),
 
                   const SizedBox(height: 10),
@@ -285,21 +253,13 @@ class _UsersListState extends State<UsersList> {
           mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
-
-            Icon(
-              Icons.people_outline,
-              size: 70,
-              color: Colors.grey,
-            ),
+            Icon(Icons.people_outline, size: 70, color: Colors.grey),
 
             SizedBox(height: 20),
 
             Text(
               'No users found',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
 
             SizedBox(height: 8),
@@ -307,9 +267,7 @@ class _UsersListState extends State<UsersList> {
             Text(
               'There are currently no registered users.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey,
-              ),
+              style: TextStyle(color: Colors.grey),
             ),
           ],
         ),
@@ -326,7 +284,6 @@ class _UsersListState extends State<UsersList> {
           mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
-
             const Icon(
               Icons.cloud_off_outlined,
               size: 70,
@@ -337,10 +294,7 @@ class _UsersListState extends State<UsersList> {
 
             const Text(
               'Unable to load users',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 10),
@@ -348,9 +302,7 @@ class _UsersListState extends State<UsersList> {
             Text(
               error!,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.grey,
-              ),
+              style: const TextStyle(color: Colors.grey),
             ),
 
             const SizedBox(height: 20),
